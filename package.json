@@ -11,8 +11,7 @@
   "dependencies": {
     "solid-js": "^1.8.22",
     "hls.js": "^1.4.0",
-    "@sentry/browser": "8.35.0",
-    "video.js": "^8.2.1"
+    "@sentry/browser": "8.35.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",

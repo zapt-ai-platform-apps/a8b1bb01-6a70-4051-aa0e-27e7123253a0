@@ -1,7 +1,5 @@
 import { createSignal, Show } from 'solid-js';
-import { onMount } from 'solid-js';
-import videojs from 'video.js';
-import 'video.js/dist/video-js.css';
+import Hls from 'hls.js';
 
 function App() {
   const [code, setCode] = createSignal('');
@@ -9,7 +7,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = createSignal(false);
   const [isLoading, setIsLoading] = createSignal(false);
   let videoRef;
-  let playerRef;
+  let hls;
 
   const login = () => {
     if (code() && password()) {
@@ -21,9 +19,9 @@ function App() {
   };
 
   const logout = () => {
-    if (playerRef) {
-      playerRef.dispose();
-      playerRef = null;
+    if (hls) {
+      hls.destroy();
+      hls = null;
     }
     setIsAuthenticated(false);
     setCode('');
@@ -32,41 +30,54 @@ function App() {
 
   const initializePlayer = () => {
     if (videoRef) {
-      playerRef = videojs(videoRef, {
-        controls: true,
-        autoplay: true,
-        preload: 'auto',
-        fluid: true,
-      });
       loadStream();
     }
   };
 
   const loadStream = () => {
-    const streamURL = `https://apsmart.in:80/get.php?username=${code()}&password=${password()}&type=m3u_plus&output=ts`;
+    const CHANNEL_ID = 'YOUR_CHANNEL_ID'; // Replace with actual channel ID
+    const streamURL = `https://apsmart.in:80/live/${code()}/${password()}/${CHANNEL_ID}.m3u8`;
     if (!streamURL) return;
     setIsLoading(true);
 
-    playerRef.src({
-      src: streamURL,
-      type: 'application/vnd.apple.mpegurl',
-    });
-
-    playerRef.on('loadedmetadata', () => {
-      playerRef.play().then(() => {
-        setIsLoading(false);
-      }).catch((error) => {
-        console.error('Error playing stream:', error);
-        setIsLoading(false);
-        alert('Error playing stream');
+    if (Hls.isSupported()) {
+      hls = new Hls();
+      hls.loadSource(streamURL);
+      hls.attachMedia(videoRef);
+      hls.on(Hls.Events.MANIFEST_PARSED, function() {
+        videoRef.play().then(() => {
+          setIsLoading(false);
+        }).catch((error) => {
+          console.error('Error playing stream:', error);
+          setIsLoading(false);
+          alert('Error playing stream');
+        });
       });
-    });
-
-    playerRef.on('error', (error) => {
-      console.error('Error loading stream:', error);
+      hls.on(Hls.Events.ERROR, function(event, data) {
+        console.error('Error loading stream:', data);
+        setIsLoading(false);
+        alert('Error loading stream');
+      });
+    } else if (videoRef.canPlayType('application/vnd.apple.mpegurl')) {
+      videoRef.src = streamURL;
+      videoRef.addEventListener('loadedmetadata', function() {
+        videoRef.play().then(() => {
+          setIsLoading(false);
+        }).catch((error) => {
+          console.error('Error playing stream:', error);
+          setIsLoading(false);
+          alert('Error playing stream');
+        });
+      });
+      videoRef.addEventListener('error', function() {
+        console.error('Error loading stream');
+        setIsLoading(false);
+        alert('Error loading stream');
+      });
+    } else {
+      alert('Your browser does not support HLS streaming.');
       setIsLoading(false);
-      alert('Error loading stream');
-    });
+    }
   };
 
   return (
@@ -111,14 +122,12 @@ function App() {
             <div class="text-center text-purple-600 font-bold">Loading stream...</div>
           </Show>
           <div class="w-full h-full">
-            <div data-vjs-player>
-              <video
-                ref={videoRef}
-                class="video-js vjs-default-skin vjs-big-play-centered w-full h-auto rounded-lg"
-                controls
-                preload="auto"
-              ></video>
-            </div>
+            <video
+              ref={(el) => videoRef = el}
+              class="w-full h-auto rounded-lg"
+              controls
+              preload="auto"
+            ></video>
           </div>
         </div>
       </Show>
