@@ -35,7 +35,7 @@ function App() {
   };
 
   const loadStream = () => {
-    const CHANNEL_ID = 'YOUR_CHANNEL_ID'; // Replace with actual channel ID
+    const CHANNEL_ID = '100'; // Replace with actual channel ID
     const streamURL = `https://apsmart.in:80/live/${code()}/${password()}/${CHANNEL_ID}.m3u8`;
     if (!streamURL) return;
     setIsLoading(true);
@@ -81,7 +81,7 @@ function App() {
   };
 
   return (
-    <div class="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4 flex flex-col items-center">
+    <div class="h-full bg-gradient-to-br from-purple-100 to-blue-100 p-4 flex flex-col items-center">
       <h1 class="text-4xl font-bold text-purple-600 mb-8">Atlas Live Pro App</h1>
       <Show when={!isAuthenticated()}>
         <div class="w-full max-w-md">

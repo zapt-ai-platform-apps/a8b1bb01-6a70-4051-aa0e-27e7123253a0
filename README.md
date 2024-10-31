@@ -67,10 +67,8 @@ Atlas Live Pro App is a web application that allows users to stream IPTV channel
 - **Channel Configuration**: The app is set to play a default channel upon login. You need to set the `CHANNEL_ID` in the `src/App.jsx` file to the desired channel ID provided by your IPTV service.
 
   ```javascript
-  const CHANNEL_ID = 'YOUR_CHANNEL_ID'; // Replace with actual channel ID
+  const CHANNEL_ID = '100'; // Replace with actual channel ID
   ```
-
-- The app does not store your code and password; they are used only to generate the stream URL during your session.
 
 ## External API Services
 
