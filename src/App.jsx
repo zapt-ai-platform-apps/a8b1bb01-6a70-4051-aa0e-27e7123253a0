@@ -1,5 +1,7 @@
 import { createSignal, Show } from 'solid-js';
-import Hls from 'hls.js';
+import { onMount } from 'solid-js';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
 
 function App() {
   const [code, setCode] = createSignal('');
@@ -7,19 +9,37 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = createSignal(false);
   const [isLoading, setIsLoading] = createSignal(false);
   let videoRef;
+  let playerRef;
 
   const login = () => {
     if (code() && password()) {
       setIsAuthenticated(true);
+      initializePlayer();
     } else {
       alert('Please enter both code and password');
     }
   };
 
   const logout = () => {
+    if (playerRef) {
+      playerRef.dispose();
+      playerRef = null;
+    }
     setIsAuthenticated(false);
     setCode('');
     setPassword('');
+  };
+
+  const initializePlayer = () => {
+    if (videoRef) {
+      playerRef = videojs(videoRef, {
+        controls: true,
+        autoplay: true,
+        preload: 'auto',
+        fluid: true,
+      });
+      loadStream();
+    }
   };
 
   const loadStream = () => {
@@ -27,30 +47,26 @@ function App() {
     if (!streamURL) return;
     setIsLoading(true);
 
-    if (Hls.isSupported()) {
-      let hls = new Hls();
-      hls.loadSource(streamURL);
-      hls.attachMedia(videoRef);
-      hls.on(Hls.Events.MANIFEST_PARSED, function () {
-        videoRef.play();
+    playerRef.src({
+      src: streamURL,
+      type: 'application/vnd.apple.mpegurl',
+    });
+
+    playerRef.on('loadedmetadata', () => {
+      playerRef.play().then(() => {
         setIsLoading(false);
-      });
-      hls.on(Hls.Events.ERROR, function (event, data) {
-        console.error(data);
+      }).catch((error) => {
+        console.error('Error playing stream:', error);
         setIsLoading(false);
-        alert('Error loading stream');
+        alert('Error playing stream');
       });
-    } else if (videoRef.canPlayType('application/vnd.apple.mpegurl')) {
-      videoRef.src = streamURL;
-      videoRef.addEventListener('loadedmetadata', function () {
-        videoRef.play();
-        setIsLoading(false);
-      });
-    } else {
-      console.error('This browser does not support HLS');
+    });
+
+    playerRef.on('error', (error) => {
+      console.error('Error loading stream:', error);
       setIsLoading(false);
-      alert('This browser does not support HLS');
-    }
+      alert('Error loading stream');
+    });
   };
 
   return (
@@ -82,28 +98,27 @@ function App() {
         </div>
       </Show>
       <Show when={isAuthenticated()}>
-        <div class="w-full max-w-4xl">
-          <div class="flex justify-between items-center mb-4">
+        <div class="w-full max-w-4xl h-full">
+          <div class="flex justify-between items-center mb-4 w-full">
             <button
               onClick={logout}
               class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
             >
               Logout
             </button>
-            <button
-              onClick={loadStream}
-              class={`px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer ${isLoading() ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={isLoading()}
-            >
-              {isLoading() ? 'Loading...' : 'Load Stream'}
-            </button>
           </div>
+          <Show when={isLoading()}>
+            <div class="text-center text-purple-600 font-bold">Loading stream...</div>
+          </Show>
           <div class="w-full h-full">
-            <video
-              ref={videoRef}
-              controls
-              class="w-full h-auto bg-black rounded-lg"
-            />
+            <div data-vjs-player>
+              <video
+                ref={videoRef}
+                class="video-js vjs-default-skin vjs-big-play-centered w-full h-auto rounded-lg"
+                controls
+                preload="auto"
+              ></video>
+            </div>
           </div>
         </div>
       </Show>

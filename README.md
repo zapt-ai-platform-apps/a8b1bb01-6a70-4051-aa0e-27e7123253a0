@@ -1,6 +1,6 @@
 # Atlas Live Pro App
 
-Atlas Live Pro App is a web application that allows users to stream IPTV channels directly from their browser. Users can enter their code (username) and password to access and watch live TV channels seamlessly.
+Atlas Live Pro App is a web application that allows users to stream IPTV channels directly from their browser. Users can enter their code (username) and password to access and watch live TV channels seamlessly. The app provides a professional-grade video player for an enhanced viewing experience.
 
 ## User Journey
 
@@ -8,21 +8,21 @@ Atlas Live Pro App is a web application that allows users to stream IPTV channel
 
 2. **Enter Code and Password**: On the main page, there are input fields where the user can enter their code (username) and password.
 
-3. **Login**: After entering the code and password, the user clicks the "Login" button.
+3. **Login and Auto-Stream**: After entering the code and password, the user clicks the "Login" button. The app authenticates the user and automatically loads and starts playing the live IPTV stream without any additional steps.
 
-4. **Load Stream**: Once authenticated, the user clicks the "Load Stream" button to start streaming.
+4. **Watch Live TV**: The live TV channel starts playing immediately in the integrated professional video player. The user can now watch the live TV channel.
 
-5. **Watch Live TV**: The app generates the stream URL using the provided code and password and plays it in the integrated video player. The user can now watch the live TV channel.
+5. **Stream Controls**: The app uses a professional video player with advanced controls such as play, pause, volume control, fullscreen mode, and more.
 
-6. **Stream Controls**: The user can control the playback using standard video controls such as play, pause, volume control, and fullscreen mode.
-
-7. **Logout**: If the user wishes to log out, they can click the "Logout" button to return to the login screen.
+6. **Logout**: If the user wishes to log out, they can click the "Logout" button to return to the login screen.
 
 ## Features
 
 - **Secure Access**: Users authenticate using their unique code and password to access the IPTV streams.
 
-- **Stream Live IPTV Channels**: Once logged in, users can watch live channels directly in the app.
+- **Auto-Streaming**: After successful login, the app automatically loads and plays the live IPTV stream without any further action required from the user.
+
+- **Professional Video Player**: Uses a professional-grade video player for enhanced user experience with advanced controls.
 
 - **Responsive Design**: The app is responsive and works well on various screen sizes, including desktops, tablets, and mobile devices.
 
@@ -44,13 +44,11 @@ Atlas Live Pro App is a web application that allows users to stream IPTV channel
 
 3. Click the "Login" button.
 
-4. Once logged in, click the "Load Stream" button.
+4. The app will authenticate your credentials and automatically load and play the live IPTV stream.
 
-5. Wait for the stream to load. Once loaded, the live TV channel will start playing in the video player.
+5. Use the video player's advanced controls to manage playback as needed.
 
-6. Use the video controls to manage playback as needed.
-
-7. To log out, click the "Logout" button.
+6. To log out, click the "Logout" button.
 
 ## Environment Variables
 
@@ -67,3 +65,5 @@ Atlas Live Pro App is a web application that allows users to stream IPTV channel
 - The app requires a valid code and password to access the IPTV streams. These should be provided by your IPTV service provider.
 
 - The app does not store your code and password; they are used only to generate the stream URL during your session.
+
+- The app uses a professional video player for an enhanced viewing experience.
